@@ -15,6 +15,7 @@ class MoveRealTimeData:
     threshold = None
     archive_path = None
     retention_period = None
+    count = 0
 
     def __init__(self):
         config_parser = RawConfigParser()
@@ -44,6 +45,9 @@ class MoveRealTimeData:
         for directory in directories:
             self.__move_process(directory)
         try:
+            if self.count == 0:
+                self.__remove_directories()
+                raise Exception('データがありませんでした')
             # 7z形式で圧縮
             subprocess.call(self.cmd)
             # 圧縮済みファイルをS3へアップロード
@@ -78,6 +82,7 @@ class MoveRealTimeData:
         created = datetime.fromtimestamp(os.path.getmtime(os.path.join(source_dir, file)))
         # 閾値より最終更新日が古いファイルを移動
         if created < self.threshold:
+            self.count += 1
             shutil.move(os.path.join(source_dir, file), os.path.join(destination_dir, file))
 
     def __remove_directories(self):
