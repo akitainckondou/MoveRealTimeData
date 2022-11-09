@@ -27,7 +27,7 @@ class MoveRealTimeData:
         self.retention_period = int(config_parser.get('CONFIG', 'retention_period'))
         # この日以前のデータを移動
         self.threshold = (datetime.now() - timedelta(days=self.days)).replace(hour=0, minute=0, second=0, microsecond=0)
-        suffix = (self.threshold - timedelta(days=1)).strftime("%Y%m%d")
+        suffix = f"{(self.threshold - timedelta(days=1)).strftime('%Y%m%d')}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
         zip_command = config_parser.get('CONFIG', 'cmd')
         self.archive_path = config_parser.get('CONFIG', 'archive_path')
